@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yago Assistant</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+
+        #user_input_container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        #user_input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #chat {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .chat-message {
+            margin-bottom: 10px;
+        }
+
+        .chat-message p {
+            margin: 0;
+        }
+
+        .user {
+            color: #007bff;
+        }
+
+        .assistant {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to Yago Assistant!</h1>
+        <div id="user_input_container">
+            <input type="text" id="user_input" placeholder="Type your message here...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        <div id="chat">
+            <div class="chat-message">
+                <p class="assistant"><b>Yago Assistant: Hello! How can I help you today?<b></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const userInput = $("#user_input").val();
+            if (userInput.trim() !== "") {
+                $.post("/chat", { user_input: userInput }, function(data) {
+                    $("#chat").append(`<div class="chat-message"><p class="user">You: ${userInput}</p></div>`);
+                    $("#chat").append(`<div class="chat-message"><p class="assistant">Yago Assistant: ${data.response}</p></div>`);
+                    $("#user_input").val("");
+                    $("#chat").scrollTop($("#chat")[0].scrollHeight);
+                });
+            }
+        }
+
+        $("#user_input").keypress(function(e) {
+            if (e.which === 13) { // Enter key pressed
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
